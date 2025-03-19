@@ -1,26 +1,35 @@
 import { useState } from "react";
 import { login } from "../utils/api";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({setUser}) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [error, setError] = useState(null);
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError(null);
         try {
-            const user = await login(username, password);
-            if (user.role !== "USER") throw new Error("Access Denied");
-            setUser(user);
-            navigate("/");
+            const data = await login(username, password);
+            console.log("Login response:", data); 
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify({ username })); 
+            setUser({ username }); 
+            navigate("/"); 
         } catch (err) {
-            alert(error.message);
+            setError(err.message);
         }
-    }
+    };
+    
+    
+
     return (
         <div className="flex justify-center">
-            <form onSubmit={handleSubmit} className="bg-zinc-300 dark:bg-zinc-700 py-12 px-8 rounded-lg flex flex-col gap-4 w-fit">
+            <form onSubmit={handleLogin} className="bg-zinc-300 dark:bg-zinc-700 py-12 px-8 rounded-lg flex flex-col gap-4 w-fit">
+            {error && <p className="text-red-500">{error}</p>}
                 <label htmlFor="username" className="flex flex-col gap-1">
                     <span className="text-sm">Username</span>
                     <input 
@@ -46,6 +55,7 @@ const Login = () => {
                     />
                 </label>
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:cursor-pointer transition delay-200 ease-in">Login</button>
+            <p className="mt-4 text-sm">Don't have an account? <Link to="/register" className="text-blue-500">Register</Link></p>
             </form>
         </div>
     )
