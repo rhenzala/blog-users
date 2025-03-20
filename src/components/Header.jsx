@@ -24,7 +24,9 @@ const Header = ({user, setUser}) => {
             <nav className="flex gap-2">
                 {user ? 
                     <button 
-                        className="bg-transparent hover:bg-zinc-900 dark:hover:bg-zinc-100 text-bg-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-900 transition duration-300 rounded-md px-4 py-2 hover:cursor-pointer"
+                        className="bg-transparent text-zinc-700 dark:text-zinc-100 hover:text-rose-500 transition duration-300 rounded-md px-4 py-2 hover:cursor-pointer"
+                        title="Logout"
+                        aria-label="Logout"
                         onClick={handleLogout}
                     >
                         <LogOut size={16}/>
