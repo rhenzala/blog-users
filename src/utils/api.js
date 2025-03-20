@@ -26,3 +26,9 @@ export const fetchPosts = async () => {
   if (!res.ok) throw new Error("Failed to fetch posts");
   return await res.json();
 };
+
+export const logout = async () => {
+  const res = await fetch(`${BASE_URL}/auth/logout`);
+  if (!res.ok) throw new Error("Something went wrong");
+  return await res.json();
+}
