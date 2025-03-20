@@ -75,6 +75,26 @@ export const editComment = async (id, content) => {
   }
 };
 
+export const deleteComment = async (id) => {
+  const token = localStorage.getItem("token"); 
+  try {
+    const res = await fetch(`${BASE_URL}/comments/${id}`, {
+      method: "DELETE",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Comment not deleted");
+    return data;
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    throw err;
+  }
+};
+
 
 export const logout = async () => {
   const res = await fetch(`${BASE_URL}/auth/logout`);
