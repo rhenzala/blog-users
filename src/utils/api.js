@@ -54,6 +54,27 @@ export const createComment = async (postId, content) => {
   }
 };
 
+export const editComment = async (id, content) => {
+  const token = localStorage.getItem("token"); 
+  try {
+    const res = await fetch(`${BASE_URL}/comments/${id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+      body: JSON.stringify({ content }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Comment not sent");
+    return data;
+  } catch (err) {
+    console.error("Error editing comment:", err);
+    throw err;
+  }
+};
+
 
 export const logout = async () => {
   const res = await fetch(`${BASE_URL}/auth/logout`);

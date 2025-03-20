@@ -1,5 +1,6 @@
-import { logout } from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/api";
+import { LogOut } from 'lucide-react';
 
 const Header = ({user, setUser}) => {
     const navigate = useNavigate();
@@ -23,10 +24,10 @@ const Header = ({user, setUser}) => {
             <nav className="flex gap-2">
                 {user ? 
                     <button 
-                        className="bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900   rounded-md px-4 py-2 hover:cursor-pointer"
+                        className="bg-transparent hover:bg-zinc-900 dark:hover:bg-zinc-100 text-bg-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-900 transition duration-300 rounded-md px-4 py-2 hover:cursor-pointer"
                         onClick={handleLogout}
                     >
-                        Logout
+                        <LogOut size={16}/>
                     </button>
                 : ""
                 }

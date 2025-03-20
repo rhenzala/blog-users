@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState } from "react";
+import { MessageSquare } from 'lucide-react';
 import Comment from "./Comment";
 
-const Blog = ({post}) => {
+const Blog = ({post, user}) => {
     const [showMore, setShowMore] = useState(false);
     const handleMoreClick = () => {
         setShowMore(!showMore);
@@ -16,15 +17,15 @@ const Blog = ({post}) => {
                     year: "numeric",
                 })}</span>
             </p>
-            <h3 className="text-xl font-bold mb-2">{post.title}</h3>
-            <p className="mb-4">{post.content}</p>
+            <h3 className="text-xl font-bold mb-1">{post.title}</h3>
+            <p className="mb-8">{post.content}</p>
             <button 
             onClick={handleMoreClick}
-            className="bg-blue-500 text-white text-sm px-2 py-1 rounded-md hover:bg-blue-600 hover:cursor-pointer transition delay-200 ease-in"
+            className="bg-transparent text-zinc-700 dark:text-zinc-300 text-sm px-2 py-1 rounded-md hover:bg-blue-500/20 hover:text-blue-500  hover:cursor-pointer focus:bg-blue-500/20 focus:text-blue-500  transition delay-200 ease-in"
             >
-                {showMore ? 'Hide' : 'Show'} comments
+                <MessageSquare size={16}/>
             </button>
-            {showMore && <Comment post={post} />}
+            {showMore && <Comment post={post} user={user} />}
         </div>
     )
 }
