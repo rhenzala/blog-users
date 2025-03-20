@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { login } from "../utils/api";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = ({setUser}) => {
     const [username, setUsername] = useState("");
@@ -14,7 +13,6 @@ const Login = ({setUser}) => {
         setError(null);
         try {
             const data = await login(username, password);
-            console.log("Login response:", data); 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify({ username })); 
             setUser({ username }); 
@@ -24,8 +22,6 @@ const Login = ({setUser}) => {
         }
     };
     
-    
-
     return (
         <div className="flex justify-center">
             <form onSubmit={handleLogin} className="bg-zinc-300 dark:bg-zinc-700 py-12 px-8 rounded-lg flex flex-col gap-4 w-fit">
@@ -38,7 +34,7 @@ const Login = ({setUser}) => {
                         id="username" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-48 lg:w-64 outline-none focus:outline focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                        className="w-48 lg:w-64 outline-none  focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
                         required
                     />
                 </label>
@@ -50,12 +46,12 @@ const Login = ({setUser}) => {
                         id="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-48 lg:w-64 outline-none focus:outline focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                        className="w-48 lg:w-64 outline-none  focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
                         required
                     />
                 </label>
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:cursor-pointer transition delay-200 ease-in">Login</button>
-            <p className="mt-4 text-sm">Don't have an account? <Link to="/register" className="text-blue-500">Register</Link></p>
+                <p className="mt-4 text-sm">Don't have an account? <Link to="/register" className="text-blue-500 hover:text-rose-500">Register</Link></p>
             </form>
         </div>
     )

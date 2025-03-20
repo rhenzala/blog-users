@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { register } from "../utils/api";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const [username, setUsername] = useState("");
@@ -34,7 +34,7 @@ const Register = () => {
                         id="username" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-48 lg:w-64 outline-none focus:outline focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                        className="w-48 lg:w-64 outline-none  focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
                         required
                     />
                 </label>
@@ -46,7 +46,7 @@ const Register = () => {
                         id="email" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-48 lg:w-64 outline-none focus:outline focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                        className="w-48 lg:w-64 outline-none  focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
                         required
                     />
                 </label>
@@ -58,11 +58,12 @@ const Register = () => {
                         id="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-48 lg:w-64 outline-none focus:outline focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                        className="w-48 lg:w-64 outline-none  focus:outline-2 focus:outline-blue-500 p-2 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
                         required
                     />
                 </label>
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:cursor-pointer transition delay-200 ease-in">Register</button>
+                <p className="mt-4 text-sm">Already have an account? <Link to="/login" className="text-blue-500 hover:text-rose-500">Login</Link></p>
             </form>
         </div>
     )
