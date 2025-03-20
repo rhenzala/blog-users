@@ -6,7 +6,7 @@ import Register from "./Register";
 const Main = ({ user, setUser }) => {
     return (
         <main className="px-4 md:px-[10%] lg:px-[20%]">
-            <div className="min-h-screen flex flex-col items-center justify-center p-4">
+            <div className="min-h-screen flex flex-col p-4">
                 <Routes>
                     <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
                     <Route path="/login" element={<Login setUser={setUser} />} />

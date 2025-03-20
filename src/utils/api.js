@@ -27,6 +27,34 @@ export const fetchPosts = async () => {
   return await res.json();
 };
 
+export const fetchComments = async (postId) => {
+  const res = await fetch(`${BASE_URL}/comments/${postId}`);
+  if (!res.ok) throw new Error("Failed to fetch comments");
+  return await res.json();
+};
+
+export const createComment = async (postId, content) => {
+  const token = localStorage.getItem("token"); 
+  try {
+    const res = await fetch(`${BASE_URL}/comments/${postId}`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+      body: JSON.stringify({ content }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Comment not sent");
+    return data;
+  } catch (err) {
+    console.error("Error creating comment:", err);
+    throw err;
+  }
+};
+
+
 export const logout = async () => {
   const res = await fetch(`${BASE_URL}/auth/logout`);
   if (!res.ok) throw new Error("Something went wrong");

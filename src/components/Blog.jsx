@@ -1,13 +1,31 @@
+import { useState } from "react"
+import Comment from "./Comment";
 
-
-const Blog = () => {
+const Blog = ({post}) => {
+    const [showMore, setShowMore] = useState(false);
+    const handleMoreClick = () => {
+        setShowMore(!showMore);
+    }
     return (
-        <section className="bg-zinc-300 dark:bg-zinc-700 mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold tracking-tight mb-4">title</h2>
-            <article className="line">
-                <p className="mb-2 line-height">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, ducimus similique quis consequuntur veniam provident, repellendus odio possimus, minus sapiente repellat sunt voluptate corporis iste incidunt explicabo omnis. Sint, nemo?</p>
-            </article>
-        </section>
+        <div className="bg-zinc-300 dark:bg-zinc-800 rounded-lg p-4 my-2">
+            <p className="flex gap-4 mb-4">
+                <span className="font-medium text-sm">{post.author.username}</span>
+                <span className="font-light text-sm">{new Date(post.updatedAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                })}</span>
+            </p>
+            <h3 className="text-xl font-bold mb-2">{post.title}</h3>
+            <p className="mb-4">{post.content}</p>
+            <button 
+            onClick={handleMoreClick}
+            className="bg-blue-500 text-white text-sm px-2 py-1 rounded-md hover:bg-blue-600 hover:cursor-pointer transition delay-200 ease-in"
+            >
+                {showMore ? 'Hide' : 'Show'} comments
+            </button>
+            {showMore && <Comment post={post} />}
+        </div>
     )
 }
 
