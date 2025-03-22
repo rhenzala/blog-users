@@ -27,8 +27,8 @@ const Blog = ({user}) => {
     if (!post) return <p>Loading...</p>;
 
     return (
-        <div className="bg-zinc-200 dark:bg-zinc-800 rounded-lg p-4 my-4">
-            <h3 className="text-3xl font-semibold tracking-tight mb-1">{post.title}</h3>
+        <div className="bg-zinc-200 dark:bg-zinc-800 rounded-lg p-4 md:p-8 lg:p-12 my-4">
+            <h3 className="text-4xl font-bold tracking-tight text-pretty mb-1">{post.title}</h3>
             <p className="flex gap-4 mb-6">
                 <span className="font-medium text-sm">{post.author.username}</span>
                 <span className="font-light text-sm">Posted on: {new Date(post.createdAt).toLocaleDateString("en-US", {
