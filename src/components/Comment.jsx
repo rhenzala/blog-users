@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchComments, deleteComment } from "../utils/api";
 import { Pencil, Trash2 } from 'lucide-react';
 import EditCommentForm from "./EditCommentForm";
@@ -12,6 +13,7 @@ const Comment = ({ post, user }) => {
     const [activeCommentId, setActiveCommentId] = useState(null); 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const isAuthenticated = localStorage.getItem("token") !== null;
 
     useEffect(() => {
         async function loadComments() {
@@ -19,7 +21,7 @@ const Comment = ({ post, user }) => {
             setComments(data);
         }
         loadComments();
-    }, []);
+    }, [post.id]);
 
     const toggleActive = (commentId) => {
         setActiveCommentId(activeCommentId === commentId ? null : commentId);
@@ -31,7 +33,7 @@ const Comment = ({ post, user }) => {
         try {
             await deleteComment(id);
             setSuccess("Comment deleted.");
-            onClos();
+            setActiveCommentId(null);
         } catch (err) {
             setError(err.message);
         }  
@@ -40,9 +42,16 @@ const Comment = ({ post, user }) => {
     return (
         <div className="mt-8">
             <div>
-                <h2 className="text-xl">Comments ({post.comments.length})</h2>
+                <h2 className="text-xl">Comments ({comments.length})</h2>
             </div>
+            {isAuthenticated ? 
             <CommentForm post={post} />
+            : 
+                <p className="my-4 text-sm text-zinc-500">
+                  <Link to="/login" className="text-blue-500 hover:text-rose-500 outline-none focus:text-rose-500">Log in</Link> to leave a comment.
+                </p>
+              
+            }
             {comments.map((comment) => (
                 <div
                     key={comment.id}
@@ -60,7 +69,7 @@ const Comment = ({ post, user }) => {
                             </span>
                         </p>
                         <div>
-                            {user.username === comment.author.username && (
+                            {isAuthenticated && user.id === comment.authorId && (
                                 <>
                                     <button
                                     onClick={() => toggleActive(comment.id)}

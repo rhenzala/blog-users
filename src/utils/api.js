@@ -41,40 +41,85 @@ export const login = async (username, password) => {
 
 export const fetchPosts = async () => {
   const token = localStorage.getItem("token"); 
-  const res = await fetch(`${BASE_URL}/posts`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`, 
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch posts");
-  return await res.json();
-};
+  if (token) {
+    const res = await fetch(`${BASE_URL}/posts`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+      credentials: "include",
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch posts");
+    return await res.json();
+  } else {
+    const res = await fetch(`${BASE_URL}/public/posts`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json", 
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch posts");
+    return await res.json();
+  }
+}; 
 
 export const fetchPostById = async (postId) => {
   const token = localStorage.getItem("token"); 
-  const res = await fetch(`${BASE_URL}/posts/${postId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`, 
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch post");
-  return await res.json();
+  if (token) {
+    const res = await fetch(`${BASE_URL}/posts/${postId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+      credentials: "include",
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch post");
+    return await res.json();
+  } else {
+    const res = await fetch(`${BASE_URL}/public/posts/${postId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch post");
+    return await res.json();
+  }
 };
 
   
 
 export const fetchComments = async (postId) => {
-  const res = await fetch(`${BASE_URL}/comments/${postId}`);
-  if (!res.ok) throw new Error("Failed to fetch comments");
-  return await res.json();
+  const token = localStorage.getItem("token");
+  if (token) {
+    const res = await fetch(`${BASE_URL}/public/posts/${postId}/comments`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch comments");
+    return await res.json();
+  } else {
+    const res = await fetch(`${BASE_URL}/comments/${postId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch comments");
+    return await res.json();
+  }
 };
 
 export const createComment = async (postId, content) => {
