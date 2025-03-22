@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/api"; // Backend URL
+const BASE_URL = "https://blog-backend-fk4s.onrender.com/api"; 
 
 export const login = async (username, password) => {
     const res = await fetch(`${BASE_URL}/auth/login`, {
@@ -15,29 +15,29 @@ export const login = async (username, password) => {
     localStorage.setItem("token", data.token); 
     localStorage.setItem("user", JSON.stringify(data.user)); 
     return data;
-  };
+};
   
-
-  export const register = async (username, email, password, confirmPassword) => {
-    const res = await fetch(`${BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password, confirmPassword, role: "USER" }),
-    });
-    
-    const data = await res.json();
-    
-    if (!res.ok) {
-      if (data.errors) {
-        const error = new Error("Validation error");
-        error.response = { data }; 
-        throw error;
-      }
-      throw new Error(data.error || "Registration failed");
+// confirmPassword is added to res body so that backend can use it for validation.
+export const register = async (username, email, password, confirmPassword) => {
+  const res = await fetch(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password, confirmPassword, role: "USER" }),
+  });
+  
+  const data = await res.json();
+  
+  if (!res.ok) {
+    if (data.errors) {
+      const error = new Error("Validation error");
+      error.response = { data }; 
+      throw error;
     }
-    
-    return data;
-  };
+    throw new Error(data.error || "Registration failed");
+  }
+  
+  return data;
+};
 
 export const fetchPosts = async () => {
   const token = localStorage.getItem("token"); 
