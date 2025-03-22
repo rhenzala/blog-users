@@ -14,7 +14,9 @@ This is a simple blog website utilizing REST API, Express, and React. This is th
 - React + Vite
 - Tailwind
 - Vercel
-  **Backend**
+
+**Backend**
+
 - Node.js
 - Express.js
 - PostgreSQL
