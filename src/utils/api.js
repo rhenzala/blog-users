@@ -29,6 +29,7 @@ export const register = async (username, email, password, confirmPassword) => {
       confirmPassword,
       role: "USER",
     }),
+    credentials: "include",
   });
 
   const data = await res.json();
@@ -136,6 +137,7 @@ export const createComment = async (postId, content) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ content }),
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -157,6 +159,7 @@ export const editComment = async (id, content) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ content }),
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -177,6 +180,7 @@ export const deleteComment = async (id) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
     });
 
     const data = await res.json();
