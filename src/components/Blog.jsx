@@ -36,11 +36,6 @@ const Blog = ({user}) => {
                     day: "2-digit",
                     year: "numeric",
                 })}</span>
-                <span className="font-light text-sm">Edited on: {new Date(post.updatedAt).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "2-digit",
-                    year: "numeric",
-                })}</span>
             </p>
             <div className="mb-8 leading-5">
                 <Markdown 
@@ -77,7 +72,7 @@ const Blog = ({user}) => {
                 <button 
                 onClick={handleMoreClick}
                 aria-label="Show or hide comments"
-                className="bg-transparent text-zinc-700 dark:text-zinc-300 text-xs px-2 py-1 rounded-md hover:bg-blue-500/20 hover:text-blue-500  hover:cursor-pointer focus:bg-blue-500/20 focus:text-blue-500  transition delay-200 ease-in flex gap-1 items-center"
+                className="bg-transparent text-zinc-700 dark:text-zinc-300 text-xs px-2 py-1 rounded-md hover:bg-blue-500/20 hover:text-blue-500  hover:cursor-pointer focus:bg-blue-500/20 focus:text-blue-500  transition delay-200 ease-in flex gap-1 items-center outline-none"
                 >
                     <MessageSquare size={16}/>
                     <span>{post.comments.length} {post.comments.length > 1 ? "Comments" : "Comment"}</span>
