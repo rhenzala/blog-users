@@ -26,13 +26,11 @@ export const login = async (username, password) => {
     });
     
     const data = await res.json();
-    console.log("data: ",data)
     
     if (!res.ok) {
       if (data.errors) {
         const error = new Error("Validation error");
         error.response = { data }; 
-        console.log("error response: ", error.response)
         throw error;
       }
       throw new Error(data.error || "Registration failed");
