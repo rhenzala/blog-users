@@ -1,35 +1,68 @@
 const BASE_URL = "https://blog-backend-fk4s.onrender.com/api";
 
+const fetchWithAuth = async (url, options = {}) => {
+  const token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {}),
+  };
+
+  const res = await fetch(url, { 
+    ...options,
+    headers,
+    credentials: options.credentials || "include"
+  });
+
+  if (res.status === 401) {
+    console.error("Unauthorized: Token expired or invalid");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login"; 
+    return;
+  }
+
+  // For login/register we need to allow non-ok responses to be handled by the caller
+  if (url.includes('/auth/login') || url.includes('/auth/register')) {
+    return res;
+  }
+
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Request failed");
+    } catch (e) {
+      throw new Error("Request failed");
+    }
+  }
+
+  return res.json();
+};
+
 export const login = async (username, password) => {
-  const res = await fetch(`${BASE_URL}/auth/login`, {
+  const res = await fetchWithAuth(`${BASE_URL}/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
-    credentials: "include",
   });
 
   if (!res.ok) throw new Error("Incorrect username or password");
 
   const data = await res.json();
-
   localStorage.setItem("token", data.token);
   localStorage.setItem("user", JSON.stringify(data.user));
   return data;
 };
 
-// confirmPassword is added to res body so that backend can use it for validation.
 export const register = async (username, email, password, confirmPassword) => {
-  const res = await fetch(`${BASE_URL}/auth/register`, {
+  const res = await fetchWithAuth(`${BASE_URL}/auth/register`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username,
       email,
       password,
       confirmPassword,
-      role: "USER",
+      role: "USER", // Changed to USER to match first file
     }),
-    credentials: "include",
   });
 
   const data = await res.json();
@@ -49,151 +82,95 @@ export const register = async (username, email, password, confirmPassword) => {
 export const fetchPosts = async () => {
   const token = localStorage.getItem("token");
   if (token) {
-    const res = await fetch(`${BASE_URL}/posts`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch posts");
-    return await res.json();
+    return fetchWithAuth(`${BASE_URL}/posts`, { method: "GET" });
   } else {
-    const res = await fetch(`${BASE_URL}/public/posts`, {
+    return fetchWithAuth(`${BASE_URL}/public/posts`, { 
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: "omit" // No need for credentials for public endpoints
     });
-
-    if (!res.ok) throw new Error("Failed to fetch posts");
-    return await res.json();
   }
 };
 
 export const fetchPostById = async (postId) => {
   const token = localStorage.getItem("token");
   if (token) {
-    const res = await fetch(`${BASE_URL}/posts/${postId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch post");
-    return await res.json();
+    return fetchWithAuth(`${BASE_URL}/posts/${postId}`, { method: "GET" });
   } else {
-    const res = await fetch(`${BASE_URL}/public/posts/${postId}`, {
+    return fetchWithAuth(`${BASE_URL}/public/posts/${postId}`, { 
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: "omit"
     });
-
-    if (!res.ok) throw new Error("Failed to fetch post");
-    return await res.json();
   }
+};
+
+export const createPost = async (title, content, published) => {
+  return fetchWithAuth(`${BASE_URL}/posts`, {
+    method: "POST",
+    body: JSON.stringify({ title, content, published }),
+  });
+};
+
+export const editPost = async (id, title, content, published) => {
+  return fetchWithAuth(`${BASE_URL}/posts/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ title, content, published }),
+  });
+};
+
+export const updatePostStatus = async (id, published) => {
+  return fetchWithAuth(`${BASE_URL}/posts/${id}/publish`, {
+    method: "PATCH",
+    body: JSON.stringify({ published }),
+  });
+};
+
+export const deletePost = async (id) => {
+  return fetchWithAuth(`${BASE_URL}/posts/${id}`, {
+    method: "DELETE",
+  });
 };
 
 export const fetchComments = async (postId) => {
   const token = localStorage.getItem("token");
   if (token) {
-    const res = await fetch(`${BASE_URL}/public/posts/${postId}/comments`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch comments");
-    return await res.json();
+    return fetchWithAuth(`${BASE_URL}/public/posts/${postId}/comments`, { method: "GET" });
   } else {
-    const res = await fetch(`${BASE_URL}/comments/${postId}`, {
+    return fetchWithAuth(`${BASE_URL}/comments/${postId}`, { 
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: "omit"
     });
-
-    if (!res.ok) throw new Error("Failed to fetch comments");
-    return await res.json();
   }
 };
 
 export const createComment = async (postId, content) => {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${postId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content }),
-      credentials: "include",
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Comment not sent");
-    return data;
-  } catch (err) {
-    console.error("Error creating comment:", err);
-    throw err;
-  }
+  return fetchWithAuth(`${BASE_URL}/comments/${postId}`, {
+    method: "POST",
+    body: JSON.stringify({ content }),
+  });
 };
 
 export const editComment = async (id, content) => {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content }),
-      credentials: "include",
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Comment not sent");
-    return data;
-  } catch (err) {
-    console.error("Error editing comment:", err);
-    throw err;
-  }
+  return fetchWithAuth(`${BASE_URL}/comments/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ content }),
+  });
 };
 
 export const deleteComment = async (id) => {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Comment not deleted");
-    return data;
-  } catch (err) {
-    console.error("Error deleting comment:", err);
-    throw err;
-  }
+  return fetchWithAuth(`${BASE_URL}/comments/${id}`, {
+    method: "DELETE",
+  });
 };
 
 export const logout = async () => {
-  const res = await fetch(`${BASE_URL}/auth/logout`);
-  if (!res.ok) throw new Error("Something went wrong");
-  return await res.json();
+  try {
+    await fetchWithAuth(`${BASE_URL}/auth/logout`, {
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
 };
